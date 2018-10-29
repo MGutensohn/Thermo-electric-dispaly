@@ -67,7 +67,7 @@ def turnOffMotors():
 atexit.register(turnOffMotors)
 
 ################################# DC motor test!
-myMotor = mh.getMotor(3)
+myMotor = mh.getMotor(1)
 
 # set the speed to start, from 0 (off) to 255 (max speed)
 myMotor.setSpeed(150)
