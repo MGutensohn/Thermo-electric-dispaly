@@ -21,7 +21,7 @@ class LoggerHelper(object):
 
 def setup_logging():
     # Default logging settings
-    LOG_FILE = "/var/log/raspibtsrv.log"
+    LOG_FILE = "/var/log/TEDbtsrv.log"
     LOG_LEVEL = logging.INFO
 
     # Define and parse command line arguments
@@ -99,7 +99,7 @@ def main():
     uuid = "7be1fcb3-5776-42fb-91fd-2ee7b5bbb86d"
 
     # Start advertising the service
-    advertise_service(server_sock, "RaspiBtSrv",
+    advertise_service(server_sock, "TEDBtSrv",
                        service_id=uuid,
                        service_classes=[uuid, SERIAL_PORT_CLASS],
                        profiles=[SERIAL_PORT_PROFILE])
