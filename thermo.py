@@ -123,10 +123,13 @@ def main():
 
             if "hot" in data:
                 myMotor.run(Adafruit_MotorHAT.BACKWARD)
+                myMotor.setSpeed(data.split()[1])
+                time.sleep(0.1)
+                myMotor.run(Adafruit_MotorHAT.RELEASE);
+                time.sleep(1)
             elif "cold" in data:
                 myMotor.run(Adafruit_MotorHAT.FORWARD)
-
-            myMotor.setSpeed(data.split()[1])
+                myMotor.setSpeed(data.split()[1])
         except IOError:
             pass
 
