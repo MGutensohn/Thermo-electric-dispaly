@@ -125,5 +125,19 @@ def main():
                 myMotor.run(Adafruit_MotorHAT.BACKWARD)
             elif "cold" in data:
                 myMotor.run(Adafruit_MotorHAT.FORWARD)
-            
+
             myMotor.setSpeed(data.split()[1])
+        except IOError:
+            pass
+
+        except KeyboardInterrupt:
+
+            if client_sock is not None:
+                client_sock.close()
+
+            server_sock.close()
+
+            print "Server going down"
+            break
+
+main()
