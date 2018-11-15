@@ -117,6 +117,8 @@ def main():
             # Read the data sent by the client
             data = client_sock.recv(1024)
             if len(data) == 0:
+                for motor in motors:
+                    motor.run(Adafruit_MotorHAT.RELEASE)
                 break
 
             print "Received [%s]" % data
@@ -126,13 +128,13 @@ def main():
             for i in range(4):
                 if setting[i] == "hot":
                     motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                    motors[i].setSpeed(255)
+                    motors[i].setSpeed(160)
                     time.sleep(0.1)
                     motors[i].run(Adafruit_MotorHAT.RELEASE)
                     time.sleep(0.5)
                 elif setting[i] == "warm":
                     motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                    motors[i].setSpeed(127)
+                    motors[i].setSpeed(100)
                     time.sleep(0.1)
                     motors[i].run(Adafruit_MotorHAT.RELEASE)
                     time.sleep(1)
@@ -143,10 +145,11 @@ def main():
                     motors[i].run(Adafruit_MotorHAT.FORWARD)
                     motors[i].setSpeed(255)
                 else:
-                    motors[i].run(Adafruit_MotorHAT.RELEASE)                
+                    motors[i].run(Adafruit_MotorHAT.RELEASE)
+            setting = []                
         except IOError:
             for motor in motors:
-                    motors.run(Adafruit_MotorHAT.RELEASE)
+                    motor.run(Adafruit_MotorHAT.RELEASE)
             pass
 
         except KeyboardInterrupt:
