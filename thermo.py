@@ -83,7 +83,7 @@ def main():
     time.sleep(10)
 
     # Make device visible
-   # os.system("hciconfig hci0 piscan")
+    os.system("hciconfig hci0 piscan")
 
     # Create a new server socket using RFCOMM protocol
     sock = BluetoothSocket(RFCOMM)
