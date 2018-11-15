@@ -67,13 +67,13 @@ def turnOffMotors():
 atexit.register(turnOffMotors)
 
 ################################# DC motor test!
-myMotor = mh.getMotor(1)
+motors = [mh.getMotor(1), mh.getMotor(2), mh.getMotor(3), mh.getMotor(4)]
 
 # set the speed to start, from 0 (off) to 255 (max speed)
-myMotor.setSpeed(150)
-myMotor.run(Adafruit_MotorHAT.FORWARD);
-# turn on motor
-myMotor.run(Adafruit_MotorHAT.RELEASE);
+for motor in motors:
+    motor.setSpeed(150)
+    motor.run(Adafruit_MotorHAT.FORWARD);
+    motor.run(Adafruit_MotorHAT.RELEASE);
 
 def main():
     # Setup logging
@@ -96,7 +96,7 @@ def main():
     port = server_sock.getsockname()[1]
 
     # The service UUID to advertise
-    uuid = "7be1fcb3-5776-42fb-91fd-2ee7b5bbb86d"
+    uuid = "f8a8bae3-3eba-493f-89e9-c221964b449b"
 
     # Start advertising the service
     advertise_service(server_sock, "TEDBtSrv",
@@ -121,16 +121,32 @@ def main():
 
             print "Received [%s]" % data
 
-            if "hot" in data:
-                myMotor.run(Adafruit_MotorHAT.BACKWARD)
-                myMotor.setSpeed(data.split()[1])
-                time.sleep(0.1)
-                myMotor.run(Adafruit_MotorHAT.RELEASE);
-                time.sleep(1)
-            elif "cold" in data:
-                myMotor.run(Adafruit_MotorHAT.FORWARD)
-                myMotor.setSpeed(data.split()[1])
+            setting = str(data).split(" ")
+
+            for i in range(4):
+                if setting[i] == "hot":
+                    motors[i].run(Adafruit_MotorHAT.BACKWARD)
+                    motors[i].setSpeed(255)
+                    time.sleep(0.1)
+                    motors[i].run(Adafruit_MotorHAT.RELEASE)
+                    time.sleep(0.5)
+                elif setting[i] == "warm":
+                    motors[i].run(Adafruit_MotorHAT.BACKWARD)
+                    motors[i].setSpeed(127)
+                    time.sleep(0.1)
+                    motors[i].run(Adafruit_MotorHAT.RELEASE)
+                    time.sleep(1)
+                elif setting[i] == "cool":
+                    motors[i].run(Adafruit_MotorHAT.FORWARD)
+                    motors[i].setSpeed(127)
+                elif setting[i] == "cold":
+                    motors[i].run(Adafruit_MotorHAT.FORWARD)
+                    motors[i].setSpeed(255)
+                else:
+                    motors[i].run(Adafruit_MotorHAT.RELEASE)                
         except IOError:
+            for motor in motors:
+                    motors.run(Adafruit_MotorHAT.RELEASE)
             pass
 
         except KeyboardInterrupt:
