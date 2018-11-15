@@ -117,36 +117,34 @@ def main():
             # Read the data sent by the client
             data = client_sock.recv(1024)
             if len(data) == 0:
-                for motor in motors:
-                    motor.run(Adafruit_MotorHAT.RELEASE)
-                break
+            else:
+                print "Received [%s]" % data
 
-            print "Received [%s]" % data
+                setting = str(data).split(" ")
 
-            setting = str(data).split(" ")
-
-            for i in range(4):
-                if setting[i] == "hot":
-                    motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                    motors[i].setSpeed(160)
-                    time.sleep(0.1)
-                    motors[i].run(Adafruit_MotorHAT.RELEASE)
-                    time.sleep(0.5)
-                elif setting[i] == "warm":
-                    motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                    motors[i].setSpeed(100)
-                    time.sleep(0.1)
-                    motors[i].run(Adafruit_MotorHAT.RELEASE)
-                    time.sleep(1)
-                elif setting[i] == "cool":
-                    motors[i].run(Adafruit_MotorHAT.FORWARD)
-                    motors[i].setSpeed(127)
-                elif setting[i] == "cold":
-                    motors[i].run(Adafruit_MotorHAT.FORWARD)
-                    motors[i].setSpeed(255)
-                else:
-                    motors[i].run(Adafruit_MotorHAT.RELEASE)
-            setting = []                
+                for i in range(4):
+                    if setting[i] == "hot":
+                        motors[i].run(Adafruit_MotorHAT.BACKWARD)
+                        motors[i].setSpeed(160)
+                        time.sleep(0.1)
+                        motors[i].run(Adafruit_MotorHAT.RELEASE)
+                        time.sleep(0.5)
+                    elif setting[i] == "warm":
+                        motors[i].run(Adafruit_MotorHAT.BACKWARD)
+                        motors[i].setSpeed(100)
+                        time.sleep(0.1)
+                        motors[i].run(Adafruit_MotorHAT.RELEASE)
+                        time.sleep(1)
+                    elif setting[i] == "cool":
+                        motors[i].run(Adafruit_MotorHAT.FORWARD)
+                        motors[i].setSpeed(127)
+                    elif setting[i] == "cold":
+                        motors[i].run(Adafruit_MotorHAT.FORWARD)
+                        motors[i].setSpeed(255)
+                    else:
+                        motors[i].run(Adafruit_MotorHAT.RELEASE)
+                setting = []  
+                          
         except IOError:
             for motor in motors:
                     motor.run(Adafruit_MotorHAT.RELEASE)
