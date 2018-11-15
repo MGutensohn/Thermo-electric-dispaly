@@ -144,6 +144,9 @@ def main():
                     else:
                         motors[i].run(Adafruit_MotorHAT.RELEASE)
                 setting = []  
+
+                client_sock.send("Received")
+
                           
         except IOError:
             for motor in motors:
