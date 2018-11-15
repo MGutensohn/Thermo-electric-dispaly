@@ -83,7 +83,7 @@ def main():
     time.sleep(10)
 
     # Make device visible
-    os.system("hciconfig hci0 piscan")
+   # os.system("hciconfig hci0 piscan")
 
     # Create a new server socket using RFCOMM protocol
     sock = BluetoothSocket(RFCOMM)
@@ -109,6 +109,7 @@ def main():
         service_matches = find_service( uuid = uuid )
 
         if len(service_matches) == 0:
+	    print "Searching for host."
             continue
         first_match = service_matches[0]
 
@@ -118,7 +119,6 @@ def main():
 
         print "connecting to \"%s\" on %s" % (name, host)
         try:
-            sock = None
 
             # This will block until we get a new connection
             # client_sock, client_info = server_sock.accept()
@@ -156,11 +156,9 @@ def main():
                         motors[i].setSpeed(255)
                     else:
                         motors[i].run(Adafruit_MotorHAT.RELEASE)
-                setting = []  
+                setting = []
 
-                client_sock.send("Received")
-
-                          
+                sock.send("Received")
         except IOError:
             for motor in motors:
                     motor.run(Adafruit_MotorHAT.RELEASE)
