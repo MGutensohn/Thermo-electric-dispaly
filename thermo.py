@@ -86,37 +86,50 @@ def main():
     os.system("hciconfig hci0 piscan")
 
     # Create a new server socket using RFCOMM protocol
-    server_sock = BluetoothSocket(RFCOMM)
-    # Bind to any port
-    server_sock.bind(("", PORT_ANY))
-    # Start listening
-    server_sock.listen(1)
+    sock = BluetoothSocket(RFCOMM)
+    # # Bind to any port
+    # server_sock.bind(("", PORT_ANY))
+    # # Start listening
+    # server_sock.listen(1)
 
     # Get the port the server socket is listening
-    port = server_sock.getsockname()[1]
+    # port = server_sock.getsockname()[1]
 
     # The service UUID to advertise
     uuid = "f8a8bae3-3eba-493f-89e9-c221964b449b"
-
     # Start advertising the service
-    advertise_service(server_sock, "TEDBtSrv",
-                       service_id=uuid,
-                       service_classes=[uuid, SERIAL_PORT_CLASS],
-                       profiles=[SERIAL_PORT_PROFILE])
+    # advertise_service(server_sock, "TEDBtSrv",
+    #                    service_id=uuid,
+    #                    service_classes=[uuid, SERIAL_PORT_CLASS],
+    #                    profiles=[SERIAL_PORT_PROFILE])
     
     while True:
-        print "Waiting for connection on RFCOMM channel %d" % port
+        # print "Waiting for connection on RFCOMM channel %d" % port
 
+        service_matches = find_service( uuid = uuid )
+
+        if len(service_matches) == 0:
+            continue
+        first_match = service_matches[0]
+
+        port = first_match["port"]
+        name = first_match["name"]
+        host = first_match["host"]
+
+        print "connecting to \"%s\" on %s" % (name, host)
         try:
-            client_sock = None
+            sock = None
 
             # This will block until we get a new connection
-            client_sock, client_info = server_sock.accept()
-            print "Accepted connection from ", client_info
+            # client_sock, client_info = server_sock.accept()
+            # print "Accepted connection from ", client_info
+
+            sock.connect((host, port))
 
             # Read the data sent by the client
-            data = client_sock.recv(1024)
+            data = sock.recv(1024)
             if len(data) == 0:
+                break
             else:
                 print "Received [%s]" % data
 
