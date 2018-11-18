@@ -6,8 +6,8 @@ import sys
 import os
 import time
 import atexit
+import socket
 
-from bluetooth import *
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
 
 class LoggerHelper(object):
@@ -83,10 +83,10 @@ def main():
     time.sleep(10)
 
     # Make device visible
-    os.system("hciconfig hci0 piscan")
+    # os.system("hciconfig hci0 piscan")
 
     # Create a new server socket using RFCOMM protocol
-    sock = BluetoothSocket(RFCOMM)
+#    sock = BluetoothSocket(RFCOMM)
     # # Bind to any port
     # server_sock.bind(("", PORT_ANY))
     # # Start listening
@@ -97,39 +97,27 @@ def main():
 
     # The service UUID to advertise
     uuid = "f8a8bae3-3eba-493f-89e9-c221964b449b"
-    # Start advertising the service
-    # advertise_service(server_sock, "TEDBtSrv",
-    #                    service_id=uuid,
-    #                    service_classes=[uuid, SERIAL_PORT_CLASS],
-    #                    profiles=[SERIAL_PORT_PROFILE])
-    
+
+    host = "192.168.7.2"
+    port = 13000
+    buffer_size = 1024
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind((host, port))
     while True:
-        # print "Waiting for connection on RFCOMM channel %d" % port
 
-        service_matches = find_service( uuid = uuid )
-
-        if len(service_matches) == 0:
-	    print "Searching for host."
-            continue
-        first_match = service_matches[0]
-
-        port = first_match["port"]
-        name = first_match["name"]
-        host = first_match["host"]
-
-        print "connecting to \"%s\" on %s" % (name, host)
+        print "listening to on %s port: %s" % (host, port)
         try:
 
             # This will block until we get a new connection
             # client_sock, client_info = server_sock.accept()
             # print "Accepted connection from ", client_info
 
-            sock.connect((host, port))
 
             # Read the data sent by the client
-            data = sock.recv(1024)
+            data, addr = sock.recvfrom(buffer_size)
             if len(data) == 0:
-                break
+                continue
             else:
                 print "Received [%s]" % data
 
@@ -138,16 +126,14 @@ def main():
                 for i in range(4):
                     if setting[i] == "hot":
                         motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                        motors[i].setSpeed(160)
-                        time.sleep(0.1)
+                        motors[i].setSpeed(100)
+                        time.sleep(0.6)
                         motors[i].run(Adafruit_MotorHAT.RELEASE)
-                        time.sleep(0.5)
                     elif setting[i] == "warm":
                         motors[i].run(Adafruit_MotorHAT.BACKWARD)
                         motors[i].setSpeed(100)
-                        time.sleep(0.1)
+                        time.sleep(0.5)
                         motors[i].run(Adafruit_MotorHAT.RELEASE)
-                        time.sleep(1)
                     elif setting[i] == "cool":
                         motors[i].run(Adafruit_MotorHAT.FORWARD)
                         motors[i].setSpeed(127)
@@ -157,19 +143,13 @@ def main():
                     else:
                         motors[i].run(Adafruit_MotorHAT.RELEASE)
                 setting = []
-
-                sock.send("Received")
         except IOError:
             for motor in motors:
                     motor.run(Adafruit_MotorHAT.RELEASE)
             pass
 
         except KeyboardInterrupt:
-
-            if client_sock is not None:
-                client_sock.close()
-
-            server_sock.close()
+            sock.close()
 
             print "Server going down"
             break

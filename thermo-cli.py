@@ -30,9 +30,8 @@ while True:
     if sys.argv[1] == "hot":
         myMotor.run(Adafruit_MotorHAT.BACKWARD)
         myMotor.setSpeed(int(sys.argv[2]))
-        time.sleep(0.1)
+        time.sleep(0.5)
         myMotor.run(Adafruit_MotorHAT.RELEASE);
-        time.sleep(1)
     elif sys.argv[1] == "cold":
         myMotor.run(Adafruit_MotorHAT.FORWARD)
         myMotor.setSpeed(int(sys.argv[2]))
