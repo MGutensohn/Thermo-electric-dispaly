@@ -10,8 +10,8 @@ def read_celsius(adc_channel=0, spi_channel=0):
     cmd = 128
     if adc_channel:
         cmd += 32
-    reply_bytes = spi.xfer2([1, cmd, 0])
-    reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
+    reply_bytes = spi.xfer2([cmd, 0])
+    reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
     spi.close()
 
     volts = (reply * 3.3) / 1024 #calculate the voltage
