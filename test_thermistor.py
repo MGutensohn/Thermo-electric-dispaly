@@ -37,6 +37,7 @@ def read_celsius(adc_channel=1):
     return tempc
 
 while True:
-    print "ADC: " + str(read_celsius()) + " Degrees Celsius"
+    print "ADC channel 0: " + str(read_celsius()) + " Degrees Celsius"
+    print "ADC channel 1: " + str(read_celsius(1)) + " Degrees Celsius"
     time.sleep(1)
 
