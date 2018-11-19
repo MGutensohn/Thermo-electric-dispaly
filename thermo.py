@@ -88,10 +88,11 @@ def read_celsius(adc_channel=0, spi_channel=0):
     reply_bytes = spi.xfer2([cmd, 0])
     reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
     spi.close()
+    print str(reply_bytes)
 
     volts = (reply * 3.3) / 1024 #calculate the voltage
     if volts == 0:
-	return 32
+	return 30
     ohms = ((1/volts)*3300)-1000 #calculate the ohms of the thermististor
 
     lnohm = math.log1p(ohms) #take ln(ohms)
@@ -109,18 +110,17 @@ def read_celsius(adc_channel=0, spi_channel=0):
     temp = 1/(a + t1 + t2) #calcualte temperature
 
     tempc = temp - 273.15 #K to C
+    print "Temp: " + str(tempc)
 
     return tempc
 
 def set_temp (temp, hand=0):
-    if temp == "hot" and read_celsius(hand, 0) <= 32.0:
+    if temp == "hot" and read_celsius(hand, 0) <= 38.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
-        motors[hand].setSpeed(100)
-    elif temp == "warm" and read_celsius(hand, 0) <= 23.0:
+        motors[hand].setSpeed(255)
+    elif temp == "warm" and read_celsius(hand, 0) <= 32.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
-        motors[hand].setSpeed(100)
-        time.sleep(0.5)
-        motors[hand].run(Adafruit_MotorHAT.RELEASE)
+        motors[hand].setSpeed(127)
     elif temp == "cool":
         motors[hand].run(Adafruit_MotorHAT.FORWARD)
         motors[hand].setSpeed(127)
@@ -147,10 +147,12 @@ def main():
 
         print "listening to on %s port: %s" % (host, port)
 
-        if(read_celsius() > 32.0):
+        if(read_celsius() > 37.0):
             motors[0].run(Adafruit_MotorHAT.RELEASE)
-        if(read_celsius(1, 0) > 32.0):
+            print "killed lefty"
+        if(read_celsius(1, 0) > 37.0):
             motors[1].run(Adafruit_MotorHAT.RELEASE)
+	    print "killed righty."
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
