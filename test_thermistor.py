@@ -36,7 +36,7 @@ def read_celsius(adc_channel=0, spi_channel=0):
 
     temp = 1/(a + t1 + t2) #calcualte temperature
 
-    tempf = temp - 273.15 #K to C
+    tempc = temp - 273.15 #K to C
 
     return tempc
 
