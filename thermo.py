@@ -110,23 +110,23 @@ def read_celsius(adc_channel=0, spi_channel=0):
 
     return tempc
 
-def set_temp (motor, temp):
-    if temp == "hot":
-        motor.run(Adafruit_MotorHAT.BACKWARD)
-        motor.setSpeed(100)
-    elif temp == "warm":
-        motor.run(Adafruit_MotorHAT.BACKWARD)
-        motor.setSpeed(100)
+def set_temp (hand=0, temp):
+    if temp == "hot" and read_celsius(hand) <= 32.0:
+        motors[hand].run(Adafruit_MotorHAT.BACKWARD)
+        motors[hand].setSpeed(100)
+    elif temp == "warm" and read_celsius(hand) <= 23.0:
+        motors[hand].run(Adafruit_MotorHAT.BACKWARD)
+        motors[hand].setSpeed(100)
         time.sleep(0.5)
-        motor.run(Adafruit_MotorHAT.RELEASE)
+        motors[hand].run(Adafruit_MotorHAT.RELEASE)
     elif setting == "cool":
-        motor.run(Adafruit_MotorHAT.FORWARD)
-        motor.setSpeed(127)
+        motors[hand].run(Adafruit_MotorHAT.FORWARD)
+        motors[hand].setSpeed(127)
     elif temp == "cold":
-        motor.run(Adafruit_MotorHAT.FORWARD)
-        motor.setSpeed(255)
+        motors[hand].run(Adafruit_MotorHAT.FORWARD)
+        motors[hand].setSpeed(255)
     else:
-        motor.run(Adafruit_MotorHAT.RELEASE)
+        motors[hand].run(Adafruit_MotorHAT.RELEASE)
     
 
 def main():
@@ -145,7 +145,7 @@ def main():
     while True:
 
         if(read_celsius() >= 32.0):
-            motors[1].run(Adafruit_MotorHAT.RELEASE)
+            motors[0].run(Adafruit_MotorHAT.RELEASE)
         if(read_celsius(1) >= 32.0):
             motors[1].run(Adafruit_MotorHAT.RELEASE)
 
@@ -161,8 +161,8 @@ def main():
 
                 setting = str(data).split(" ")
 
-                set_temp(motors[0], setting[0])
-                set_temp(motors[1], setting[1])
+                set_temp(0, setting[0])
+                set_temp(1, setting[1])
 
                 setting = []
         except IOError:
