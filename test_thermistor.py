@@ -38,7 +38,7 @@ def read_celsius(adc_channel=0, spi_channel=0):
 
     tempc = temp - 273.15 - 4 #K to C
 
-    return tempc
+    return temp
 
 while True:
     print "ADC: " + str(read_celsius()) + " Degrees Celsius"
