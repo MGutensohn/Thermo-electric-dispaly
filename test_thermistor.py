@@ -2,16 +2,16 @@ import spidev
 import time
 import math
 
-def read_celsius(adc_channel=1, spi_channel=0):
-    spi = spidev.SpiDev()
-    spi.open(0, spi_channel)
-    spi.max_speed_hz = 1200000
+spi = spidev.SpiDev()
+spi.open(0, spi_channel)
+spi.max_speed_hz = 500000
+
+def read_celsius(adc_channel=1):
     cmd = 128
     if adc_channel:
         cmd += 32
     reply_bytes = spi.xfer2([cmd, 0])
     reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
-    spi.close()
     print str(reply_bytes)
     print str(reply)
 
