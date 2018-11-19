@@ -145,13 +145,12 @@ def main():
     sock.bind((host, port))
     while True:
 
+        print "listening to on %s port: %s" % (host, port)
+
         if(read_celsius() > 32.0):
             motors[0].run(Adafruit_MotorHAT.RELEASE)
         if(read_celsius(1, 0) > 32.0):
             motors[1].run(Adafruit_MotorHAT.RELEASE)
-
-
-        print "listening to on %s port: %s" % (host, port)
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
