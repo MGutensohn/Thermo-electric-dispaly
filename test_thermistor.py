@@ -2,7 +2,7 @@ import spidev
 import time
 import math
 
-def read_celsius(adc_channel=0, spi_channel=0):
+def read_celsius(adc_channel=1, spi_channel=0):
     spi = spidev.SpiDev()
     spi.open(0, spi_channel)
     spi.max_speed_hz = 1200000
@@ -13,6 +13,8 @@ def read_celsius(adc_channel=0, spi_channel=0):
     reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
     spi.close()
     print str(reply_bytes)
+    print str(reply)
+
     volts = (reply * 3.3) / 1024 #calculate the voltage
     ohms = ((1/volts)*3300)-1000 #calculate the ohms of the thermististor
 
