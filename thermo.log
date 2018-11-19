@@ -1,17 +1,12 @@
-2018-11-18 01:46:15,939 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 01:47:28,675 INFO     Received [neutral neutral neutral neutral]
-2018-11-18 01:47:28,713 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 01:47:28,716 INFO     Received [cold cold warm neutral]
-2018-11-18 01:47:29,276 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 01:48:37,201 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 02:01:20,464 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 02:01:20,674 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 15:50:05,911 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 16:07:22,448 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 16:14:29,058 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 18:37:01,373 INFO     Received [neutral neutral neutral neutral]
-2018-11-18 18:37:01,420 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 18:37:01,422 INFO     Received [cold cold warm neutral]
-2018-11-18 18:37:02,001 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 18:48:07,865 INFO     listening to on 192.168.7.2 port: 13000
-2018-11-18 18:52:09,267 INFO     listening to on 192.168.7.2 port: 13000
+2018-11-19 00:10:07,205 INFO     Received [neutral neutral neutral neutral]
+2018-11-19 00:10:07,250 INFO     listening to on 192.168.7.2 port: 13000
+2018-11-19 00:10:07,252 INFO     Received [hot hot warm neutral]
+2018-11-19 00:10:09,022 INFO     listening to on 192.168.7.2 port: 13000
+2018-11-19 00:11:34,351 INFO     Received [neutral neutral neutral neutral]
+2018-11-19 00:11:34,384 INFO     listening to on 192.168.7.2 port: 13000
+2018-11-19 00:11:34,387 INFO     Received [hot hot warm neutral]
+2018-11-19 00:11:36,157 INFO     listening to on 192.168.7.2 port: 13000
+2018-11-19 00:13:10,622 INFO     Received [hot cold warm neutral]
+2018-11-19 00:13:11,784 INFO     listening to on 192.168.7.2 port: 13000
+2018-11-19 00:13:12,909 INFO     Received [cold cold warm neutral]
+2018-11-19 00:13:13,462 INFO     listening to on 192.168.7.2 port: 13000

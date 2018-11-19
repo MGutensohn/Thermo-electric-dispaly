@@ -90,6 +90,8 @@ def read_celsius(adc_channel=0, spi_channel=0):
     spi.close()
 
     volts = (reply * 3.3) / 1024 #calculate the voltage
+    if volts == 0:
+	return 32
     ohms = ((1/volts)*3300)-1000 #calculate the ohms of the thermististor
 
     lnohm = math.log1p(ohms) #take ln(ohms)
@@ -110,16 +112,16 @@ def read_celsius(adc_channel=0, spi_channel=0):
 
     return tempc
 
-def set_temp (hand=0, temp):
-    if temp == "hot" and read_celsius(hand) <= 32.0:
+def set_temp (temp, hand=0):
+    if temp == "hot" and read_celsius(hand, 0) <= 32.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(100)
-    elif temp == "warm" and read_celsius(hand) <= 23.0:
+    elif temp == "warm" and read_celsius(hand, 0) <= 23.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(100)
         time.sleep(0.5)
         motors[hand].run(Adafruit_MotorHAT.RELEASE)
-    elif setting == "cool":
+    elif temp == "cool":
         motors[hand].run(Adafruit_MotorHAT.FORWARD)
         motors[hand].setSpeed(127)
     elif temp == "cold":
@@ -127,11 +129,10 @@ def set_temp (hand=0, temp):
         motors[hand].setSpeed(255)
     else:
         motors[hand].run(Adafruit_MotorHAT.RELEASE)
-    
 
 def main():
     # Setup logging
-    setup_logging()
+ #   setup_logging()
 
     # We need to wait until Bluetooth init is done
     time.sleep(10)
@@ -144,9 +145,9 @@ def main():
     sock.bind((host, port))
     while True:
 
-        if(read_celsius() >= 32.0):
+        if(read_celsius() > 32.0):
             motors[0].run(Adafruit_MotorHAT.RELEASE)
-        if(read_celsius(1) >= 32.0):
+        if(read_celsius(1, 0) > 32.0):
             motors[1].run(Adafruit_MotorHAT.RELEASE)
 
 
@@ -161,8 +162,8 @@ def main():
 
                 setting = str(data).split(" ")
 
-                set_temp(0, setting[0])
-                set_temp(1, setting[1])
+                set_temp(setting[0], 0)
+                set_temp(setting[1], 1)
 
                 setting = []
         except IOError:
