@@ -3,7 +3,7 @@ import time
 import math
 
 spi = spidev.SpiDev()
-spi.open(0, spi_channel)
+spi.open(0, 0)
 spi.max_speed_hz = 500000
 
 def read_celsius(adc_channel=1):
