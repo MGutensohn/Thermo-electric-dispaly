@@ -14,10 +14,10 @@ def read_celsius(adc_channel=0, spi_channel=0):
     reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
     spi.close()
 
-    reading = (1023 / reply) - 1
-    reading = 10000 / reading
+    reading = (1023.0 / reply) - 1.0
+    read = 10000 / reading
 
-    steinhart = reading / 10000
+    steinhart = read / 10000
     steinhart = math.log1p(steinhart)
     steinhart /= 3950
     steinhart += 1.0 / (25 + 273.15)
