@@ -14,22 +14,17 @@ def read_celsius(adc_channel=0, spi_channel=0):
     reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
     spi.close()
 
-    volts = (reply * 3.3) /1024
-    ohms = ((1/volts) * 3300)-1000
-    lnohms = math.log1p(ohms)
+    reading = (1023 / reply) - 1
+    reading = 10000 / reading
 
-    a = 0.002197222470870
-    b = 0.000161097632222
-    c = 0.000000125008328
-
-    t1 = (b*lnohms)
-    c2 = c*lnohms
-    t2 = math.pow(c2,3)
-
-    kelvin = 1/(a + t1 + t2)
-    celsius = kelvin - 273.15 - 4
-    return celsius
+    steinhart = reading / 10000
+    steinhart = math.log1p(steinhart)
+    steinhart /= 3950
+    steinhart += 1.0 / (25 + 273.15)
+    steinhart = 1.0 / steinhart
+    steinhart -= 273.15
+    return steinhart
 
 while True:
-    print "ADC: " + str(read_celsius()) + "Degrees Celsius"
+    print "ADC: " + str(read_celsius()) + " Degrees Celsius"
 
