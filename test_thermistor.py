@@ -1,7 +1,6 @@
 import spidev
 import time
 import math
-import bitstring
 
 def read_celsius(adc_channel=0, spi_channel=0):
     spi = spidev.SpiDev()
@@ -19,14 +18,9 @@ def read_celsius(adc_channel=0, spi_channel=0):
 
     lnohm = math.log1p(ohms) #take ln(ohms)
 
-    #a, b, & c values from http://www.thermistor.com/calculators.php
-    #using curve R (-6.2%/C @ 25C) Mil Ratio X
     a =  0.002197222470870
     b =  0.000161097632222
     c =  0.000000125008328
-
-    #Steinhart Hart Equation
-    # T = 1/(a + b[ln(ohm)] + c[ln(ohm)]^3)
 
     t1 = (b*lnohm) # b[ln(ohm)]
 

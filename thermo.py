@@ -6,6 +6,9 @@ import sys
 import os
 import time
 import atexit
+
+import spidev
+import math
 import socket
 
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
@@ -75,6 +78,57 @@ for motor in motors:
     motor.run(Adafruit_MotorHAT.FORWARD);
     motor.run(Adafruit_MotorHAT.RELEASE);
 
+def read_celsius(adc_channel=0, spi_channel=0):
+    spi = spidev.SpiDev()
+    spi.open(0, spi_channel)
+    spi.max_speed_hz = 1200000
+    cmd = 128
+    if adc_channel:
+        cmd += 32
+    reply_bytes = spi.xfer2([cmd, 0])
+    reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
+    spi.close()
+
+    volts = (reply * 3.3) / 1024 #calculate the voltage
+    ohms = ((1/volts)*3300)-1000 #calculate the ohms of the thermististor
+
+    lnohm = math.log1p(ohms) #take ln(ohms)
+
+    a =  0.002197222470870
+    b =  0.000161097632222
+    c =  0.000000125008328
+
+    t1 = (b*lnohm) # b[ln(ohm)]
+
+    c2 = c*lnohm # c[ln(ohm)]
+
+    t2 = math.pow(c2,3) # c[ln(ohm)]^3
+
+    temp = 1/(a + t1 + t2) #calcualte temperature
+
+    tempc = temp - 273.15 #K to C
+
+    return tempc
+
+def set_temp (motor, temp):
+    if temp == "hot":
+        motor.run(Adafruit_MotorHAT.BACKWARD)
+        motor.setSpeed(100)
+    elif temp == "warm":
+        motor.run(Adafruit_MotorHAT.BACKWARD)
+        motor.setSpeed(100)
+        time.sleep(0.5)
+        motor.run(Adafruit_MotorHAT.RELEASE)
+    elif setting == "cool":
+        motor.run(Adafruit_MotorHAT.FORWARD)
+        motor.setSpeed(127)
+    elif temp == "cold":
+        motor.run(Adafruit_MotorHAT.FORWARD)
+        motor.setSpeed(255)
+    else:
+        motor.run(Adafruit_MotorHAT.RELEASE)
+    
+
 def main():
     # Setup logging
     setup_logging()
@@ -90,15 +144,15 @@ def main():
     sock.bind((host, port))
     while True:
 
+        if(read_celsius() >= 32.0):
+            motors[1].run(Adafruit_MotorHAT.RELEASE)
+        if(read_celsius(1) >= 32.0):
+            motors[1].run(Adafruit_MotorHAT.RELEASE)
+
+
         print "listening to on %s port: %s" % (host, port)
         try:
-
-            # This will block until we get a new connection
-            # client_sock, client_info = server_sock.accept()
-            # print "Accepted connection from ", client_info
-
-
-            # Read the data sent by the client
+            # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
             if len(data) == 0:
                 continue
@@ -107,25 +161,9 @@ def main():
 
                 setting = str(data).split(" ")
 
-                for i in range(4):
-                    if setting[i] == "hot":
-                        motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                        motors[i].setSpeed(100)
-                        time.sleep(0.6)
-                        motors[i].run(Adafruit_MotorHAT.RELEASE)
-                    elif setting[i] == "warm":
-                        motors[i].run(Adafruit_MotorHAT.BACKWARD)
-                        motors[i].setSpeed(100)
-                        time.sleep(0.5)
-                        motors[i].run(Adafruit_MotorHAT.RELEASE)
-                    elif setting[i] == "cool":
-                        motors[i].run(Adafruit_MotorHAT.FORWARD)
-                        motors[i].setSpeed(127)
-                    elif setting[i] == "cold":
-                        motors[i].run(Adafruit_MotorHAT.FORWARD)
-                        motors[i].setSpeed(255)
-                    else:
-                        motors[i].run(Adafruit_MotorHAT.RELEASE)
+                set_temp(motors[0], setting[0])
+                set_temp(motors[1], setting[1])
+
                 setting = []
         except IOError:
             for motor in motors:
