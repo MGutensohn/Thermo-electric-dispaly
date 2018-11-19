@@ -4,7 +4,7 @@ import math
 
 spi = spidev.SpiDev()
 spi.open(0, 0)
-# spi.max_speed_hz = 500000
+spi.max_speed_hz = 1200000
 
 def read_celsius(adc_channel=0):
     cmd = 128
