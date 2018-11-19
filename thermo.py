@@ -25,7 +25,7 @@ def setup_logging():
     LOG_LEVEL = logging.INFO
 
     # Define and parse command line arguments
-    argp = argparse.ArgumentParser(description="Raspberry PI Bluetooth Server")
+    argp = argparse.ArgumentParser(description="Thermo Electric Display Receiver")
     argp.add_argument("-l", "--log", help="log (default '" + LOG_FILE + "')")
 
     # Grab the log file from arguments
@@ -81,22 +81,6 @@ def main():
 
     # We need to wait until Bluetooth init is done
     time.sleep(10)
-
-    # Make device visible
-    # os.system("hciconfig hci0 piscan")
-
-    # Create a new server socket using RFCOMM protocol
-#    sock = BluetoothSocket(RFCOMM)
-    # # Bind to any port
-    # server_sock.bind(("", PORT_ANY))
-    # # Start listening
-    # server_sock.listen(1)
-
-    # Get the port the server socket is listening
-    # port = server_sock.getsockname()[1]
-
-    # The service UUID to advertise
-    uuid = "f8a8bae3-3eba-493f-89e9-c221964b449b"
 
     host = "192.168.7.2"
     port = 13000
