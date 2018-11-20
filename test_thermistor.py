@@ -10,7 +10,7 @@ def read_celsius(adc_channel=0):
     cmd = 128
     if adc_channel:
         cmd += 32
-    reply_bytes = spi.xfer2([cmd, 0, 0])
+    reply_bytes = spi.xfer2([cmd, 0x0, 0x0])
     # reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
     reply = (reply_bytes[0] & 0x01) << 9
     reply |= (reply_bytes[1] & 0xFF) << 1
