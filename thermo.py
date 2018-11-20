@@ -110,8 +110,7 @@ def read_celsius(adc_channel=0):
     temp = 1/(a + t1 + t2) #calcualte temperature
 
     tempc = temp - 273.15 #K to C
-    print "Channel " + str(adc_channel) + ": " + str(reply_bytes) + " temp: " + str(tempc)
-
+    
     return tempc
 
 def check_temp(max):
@@ -132,7 +131,7 @@ def set_temp (temp, hand=0):
     if temp == "hot":
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(255)
-    elif temp == "warm" and read_celsius(hand) <= 32.0:
+    elif temp == "warm" and read_celsius(hand) <= 23.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(127)
     elif temp == "cool":
@@ -146,16 +145,14 @@ def set_temp (temp, hand=0):
 
 def main():
     # Setup logging
- #   setup_logging()
-
-    # We need to wait until Bluetooth init is done
+    setup_logging()
     time.sleep(10)
 
     host = "192.168.7.2"
     port = 13000
     buffer_size = 1024
 
-    temp_monitor = threading.Thread(target=check_temp, args=(38.0,))
+    temp_monitor = threading.Thread(target=check_temp, args=(30.0,))
     temp_monitor.start()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -163,13 +160,6 @@ def main():
     while True:
 
         print "listening to on %s port: %s" % (host, port)
-
-        if read_celsius() > 38.0:
-            motors[0].run(Adafruit_MotorHAT.RELEASE)
-
-        if read_celsius(1) > 38.0:
-            motors[1].run(Adafruit_MotorHAT.RELEASE)
-            print "killed righty."
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
