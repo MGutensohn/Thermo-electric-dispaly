@@ -120,15 +120,9 @@ def check_temp(max):
         if temp_left >= max:
             motors[0].run(Adafruit_MotorHAT.RELEASE)
             print "Left hand exceeded " + str(max) + " *C"
-            time.sleep(3)
-            motors[0].run(Adafruit_MotorHAT.BACKWARD)
-            motors[0].setSpeed(255)
         if temp_right >= max:
             motors[1].run(Adafruit_MotorHAT.RELEASE)
             print "Right hand exceeded " + str(max) + " *C"
-            time.sleep(3)
-            motors[1].run(Adafruit_MotorHAT.BACKWARD)
-            motors[1].setSpeed(255)
         print "Left temp: " + str(temp_left) + "*C   Right temp: " + str(temp_right) + "*C"
         time.sleep(0.5)
 
@@ -168,16 +162,15 @@ def main():
         print "listening to on %s port: %s" % (host, port)
         try:
             # Read the data sent by the Unity
+            setting = []
             data, addr = sock.recvfrom(buffer_size)
-            if len(data) == 0:
-                continue
-            else:
+            if len(data) != 0:
                 print "Received [%s]" % data
 
                 setting = str(data).split(" ")
 
-                set_temp(setting[0], 0)
-                set_temp(setting[1], 1)
+            set_temp(setting[0], 0)
+            set_temp(setting[1], 1)
         except IOError:
             for motor in motors:
                     motor.run(Adafruit_MotorHAT.RELEASE)
