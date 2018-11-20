@@ -158,11 +158,13 @@ def set_temp (temp, hand=0):
     elif temp == "cool":
         motors[hand].run(Adafruit_MotorHAT.FORWARD)
         motors[hand].setSpeed(127)
+        motors[hand+2].run(Adafruit_MotorHAT.FORWARD)
+        motors[hand+2].setSpeed(128)
     elif temp == "cold":
         motors[hand].run(Adafruit_MotorHAT.FORWARD)
-        motors[hand].setSpeed(255)
+        motors[hand].setSpeed(150)
         motors[hand+2].run(Adafruit_MotorHAT.FORWARD)
-        motors[hand+2].setSpeed(255)
+        motors[hand+2].setSpeed(128)
     else:
         motors[hand].run(Adafruit_MotorHAT.RELEASE)
 
