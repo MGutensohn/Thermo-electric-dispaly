@@ -120,9 +120,15 @@ def check_temp(max):
         if temp_left >= max:
             motors[0].run(Adafruit_MotorHAT.RELEASE)
             print "Left hand exceeded " + str(max) + " *C"
+            time.sleep(3)
+            motors[0].run(Adafruit_MotorHAT.BACKWARD)
+            motors[0].setSpeed(255)
         if temp_right >= max:
             motors[1].run(Adafruit_MotorHAT.RELEASE)
             print "Right hand exceeded " + str(max) + " *C"
+            time.sleep(3)
+            motors[1].run(Adafruit_MotorHAT.BACKWARD)
+            motors[1].setSpeed(255)
         print "Left temp: " + str(temp_left) + "*C   Right temp: " + str(temp_right) + "*C"
         time.sleep(0.5)
 
@@ -131,7 +137,7 @@ def set_temp (temp, hand=0):
     if temp == "hot":
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(255)
-    elif temp == "warm" and read_celsius(hand) <= 23.0:
+    elif temp == "warm" and read_celsius(hand) <= 34.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(127)
     elif temp == "cool":
