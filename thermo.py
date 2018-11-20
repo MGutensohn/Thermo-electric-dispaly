@@ -115,7 +115,7 @@ def read_celsius(adc_channel=0):
     return tempc
 
 def check_temp(max):
-    while true:
+    while True:
         temp_left = read_celsius()
         temp_right = read_celsius(1)
         if temp_left >= max:
