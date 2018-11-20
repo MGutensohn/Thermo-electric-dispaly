@@ -9,6 +9,8 @@ import atexit
 
 import spidev
 import math
+import threading
+
 import socket
 
 from Adafruit_MotorHAT import Adafruit_MotorHAT, Adafruit_DCMotor
@@ -112,8 +114,22 @@ def read_celsius(adc_channel=0):
 
     return tempc
 
+def check_temp(max):
+    while true:
+        temp_left = read_celsius()
+        temp_right = read_celsius(1)
+        if temp_left >= max:
+            motors[hand].run(Adafruit_MotorHAT.RELEASE)
+            print "Left hand exceeded " + max + " *C"
+        if temp_right >= max:
+            motors[hand].run(Adafruit_MotorHAT.RELEASE)
+            print "Right hand exceeded " + max + " *C"
+        print "Left temp: " + temp_left + "*C   Right temp: " + temp_right + "*C"
+        time.sleep(0.5)
+
+
 def set_temp (temp, hand=0):
-    if temp == "hot" and read_celsius(hand) <= 38.0:
+    if temp == "hot":
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(255)
     elif temp == "warm" and read_celsius(hand) <= 32.0:
@@ -139,6 +155,9 @@ def main():
     port = 13000
     buffer_size = 1024
 
+    temp_monitor = threading.Thread(target=check_temp, args(38.0))
+    temp_monitor.start()
+
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((host, port))
     while True:
@@ -147,7 +166,6 @@ def main():
 
         if read_celsius() > 38.0:
             motors[0].run(Adafruit_MotorHAT.RELEASE)
-            print "killed lefty"
 
         if read_celsius(1) > 38.0:
             motors[1].run(Adafruit_MotorHAT.RELEASE)
@@ -170,8 +188,10 @@ def main():
             pass
 
         except KeyboardInterrupt:
+            for motor in motors:
+                    motor.run(Adafruit_MotorHAT.RELEASE)
+            temp_monitor.join()
             sock.close()
-
             print "Server going down"
             break
 
