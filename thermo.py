@@ -160,7 +160,7 @@ def main():
     setting = []
     while True:
 
-        print "listening to on %s port: %s" % (host, port)
+        print "listening on %s port: %s" % (host, port)
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
@@ -168,17 +168,17 @@ def main():
                 print "Received [%s]" % data
 
                 setting = str(data).split(" ")
-            if len(setting) > 0:
-                set_temp(setting[0], 0)
-                set_temp(setting[1], 1)
         except IOError:
             for motor in motors:
-                    motor.run(Adafruit_MotorHAT.RELEASE)
+                motor.run(Adafruit_MotorHAT.RELEASE)
             pass
+        if len(setting) > 0:
+            set_temp(setting[0], 0)
+            set_temp(setting[1], 1)
 
         except KeyboardInterrupt:
             for motor in motors:
-                    motor.run(Adafruit_MotorHAT.RELEASE)
+                motor.run(Adafruit_MotorHAT.RELEASE)
             temp_monitor.join()
             sock.close()
             print "Server going down"
