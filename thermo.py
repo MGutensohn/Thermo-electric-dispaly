@@ -78,21 +78,20 @@ for motor in motors:
     motor.run(Adafruit_MotorHAT.FORWARD);
     motor.run(Adafruit_MotorHAT.RELEASE);
 
-def read_celsius(adc_channel=0, spi_channel=0):
-    spi = spidev.SpiDev()
-    spi.open(0, spi_channel)
-    spi.max_speed_hz = 1200000
-    cmd = 128
-    if adc_channel:
-        cmd += 32
+spi = spidev.SpiDev()
+spi.open(0, 0)
+spi.max_speed_hz = 500000
+
+def read_celsius(adc_channel=0):
+    if adc_channel == 0:
+        cmd = 0b01100000
+    else:
+        cmd = 0b01110000
     reply_bytes = spi.xfer2([cmd, 0])
     reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
-    spi.close()
-    print str(reply_bytes)
+    print "Channel " + str(adc_channel) + ": " + str(reply_bytes) + " reply: " + str(reply)
 
     volts = (reply * 3.3) / 1024 #calculate the voltage
-    if volts == 0:
-	return 30
     ohms = ((1/volts)*3300)-1000 #calculate the ohms of the thermististor
 
     lnohm = math.log1p(ohms) #take ln(ohms)
@@ -110,7 +109,6 @@ def read_celsius(adc_channel=0, spi_channel=0):
     temp = 1/(a + t1 + t2) #calcualte temperature
 
     tempc = temp - 273.15 #K to C
-    print "Temp: " + str(tempc)
 
     return tempc
 
@@ -147,12 +145,12 @@ def main():
 
         print "listening to on %s port: %s" % (host, port)
 
-        if(read_celsius() > 37.0):
+        if(read_celsius() > 38.0):
             motors[0].run(Adafruit_MotorHAT.RELEASE)
             print "killed lefty"
-        if(read_celsius(1, 0) > 37.0):
+        if(read_celsius(1) > 38.0):
             motors[1].run(Adafruit_MotorHAT.RELEASE)
-	    print "killed righty."
+	        print "killed righty."
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
@@ -165,8 +163,6 @@ def main():
 
                 set_temp(setting[0], 0)
                 set_temp(setting[1], 1)
-
-                setting = []
         except IOError:
             for motor in motors:
                     motor.run(Adafruit_MotorHAT.RELEASE)
