@@ -113,17 +113,20 @@ def read_celsius(adc_channel=0):
 
     return tempc
 
-def check_temp(max):
+def check_temp(max, hand):
     while True:
-        temp_left = read_celsius()
-        temp_right = read_celsius(1)
-        if temp_left >= max:
-            motors[0].run(Adafruit_MotorHAT.RELEASE)
-            print "Left hand exceeded " + str(max) + " *C"
-        if temp_right >= max:
-            motors[1].run(Adafruit_MotorHAT.RELEASE)
-            print "Right hand exceeded " + str(max) + " *C"
-        print "Left temp: " + str(temp_left) + "*C   Right temp: " + str(temp_right) + "*C"
+        temp = read_celsius(hand)
+        if temp >= max:
+            motors[hand].run(Adafruit_MotorHAT.RELEASE)
+            print "Exceeded " + str(max) + " *C"
+            while True:
+                if read_celsius(hand) < max - 1:
+                    motors[hand].run(Adafruit_MotorHAT.BACKWARD)
+                    motors[hand].setSpeed(255)
+                    break
+                time.sleep(0.5)
+
+
         time.sleep(0.5)
 
 
@@ -140,6 +143,8 @@ def set_temp (temp, hand=0):
     elif temp == "cold":
         motors[hand].run(Adafruit_MotorHAT.FORWARD)
         motors[hand].setSpeed(255)
+        motors[hand+2].run(Adafruit_MotorHAT.FORWARD)
+        motors[hand+2].setSpeed(255)
     else:
         motors[hand].run(Adafruit_MotorHAT.RELEASE)
 
@@ -152,21 +157,28 @@ def main():
     port = 13000
     buffer_size = 1024
 
-    temp_monitor = threading.Thread(target=check_temp, args=(37.0,))
-    temp_monitor.start()
+    temp_monitor_left = threading.Thread(target=check_temp, args=(36.0, 0,))
+    temp_monitor_right = threading.Thread(target=check_temp, args=(36.0, 1,))
+
+    temp_monitor_left.start()
+    temp_monitor_right.start()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((host, port))
     setting = []
     while True:
 
+        if len(setting) > 0:
+            for motor in motors:
+                motor.run(Adafruit_MotorHAT.RELEASE)
+            set_temp(setting[0], 0)
+            set_temp(setting[1], 1)
         print "listening on %s port: %s" % (host, port)
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
             if len(data) != 0:
                 print "Received [%s]" % data
-
                 setting = str(data).split(" ")
         except IOError:
             for motor in motors:
@@ -180,7 +192,4 @@ def main():
             sock.close()
             print "Server going down"
             break
-        if len(setting) > 0:
-            set_temp(setting[0], 0)
-            set_temp(setting[1], 1)
 main()
