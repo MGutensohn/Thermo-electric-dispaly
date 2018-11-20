@@ -145,10 +145,11 @@ def main():
 
         print "listening to on %s port: %s" % (host, port)
 
-        if(read_celsius() > 38.0):
+        if read_celsius() > 38.0:
             motors[0].run(Adafruit_MotorHAT.RELEASE)
             print "killed lefty"
-        if(read_celsius(1) > 38.0):
+            
+        if read_celsius(1) > 38.0:
             motors[1].run(Adafruit_MotorHAT.RELEASE)
 	        print "killed righty."
         try:
