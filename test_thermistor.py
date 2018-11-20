@@ -11,7 +11,7 @@ def read_celsius(adc_channel=0):
         cmd = 0b01100000
     else:
         cmd = 0b01110000
-    reply_bytes = spi.xfer2([1, adc_channel, 0])
+    reply_bytes = spi.xfer2([1, cmd, 0])
     reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
     print "Channel " + str(adc_channel) + ": " + str(reply_bytes) + " reply: " + str(reply)
 
