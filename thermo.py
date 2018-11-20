@@ -113,10 +113,10 @@ def read_celsius(adc_channel=0):
     return tempc
 
 def set_temp (temp, hand=0):
-    if temp == "hot" and read_celsius(hand, 0) <= 38.0:
+    if temp == "hot" and read_celsius(hand) <= 38.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(255)
-    elif temp == "warm" and read_celsius(hand, 0) <= 32.0:
+    elif temp == "warm" and read_celsius(hand) <= 32.0:
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(127)
     elif temp == "cool":
