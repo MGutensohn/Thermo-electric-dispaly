@@ -80,6 +80,12 @@ for motor in motors:
     motor.run(Adafruit_MotorHAT.FORWARD);
     motor.run(Adafruit_MotorHAT.RELEASE);
 
+
+#THERMAL READING CODE
+
+max_temp_left = 37.0
+max_temp_right = 37.0
+
 spi = spidev.SpiDev()
 spi.open(0, 0)
 spi.max_speed_hz = 500000
@@ -113,8 +119,12 @@ def read_celsius(adc_channel=0):
 
     return tempc
 
-def check_temp(max, hand):
+def check_temp(hand):
     while True:
+        if hand == 0:
+            max = max_temp_left
+        else:
+            max = max_temp_right
         temp = read_celsius(hand)
         if temp >= max:
             motors[hand].run(Adafruit_MotorHAT.RELEASE)
@@ -132,9 +142,17 @@ def check_temp(max, hand):
 
 def set_temp (temp, hand=0):
     if temp == "hot":
+        if hand == 0:
+            max_temp_left = 37.0
+        else:
+            max_temp_right = 37.0
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(255)
-    elif temp == "warm" and read_celsius(hand) <= 34.0:
+    elif temp == "warm":
+        if hand == 0:
+            max_temp_left = 35.0
+        else:
+            max_temp_right = 35.0
         motors[hand].run(Adafruit_MotorHAT.BACKWARD)
         motors[hand].setSpeed(127)
     elif temp == "cool":
@@ -157,8 +175,8 @@ def main():
     port = 13000
     buffer_size = 1024
 
-    temp_monitor_left = threading.Thread(target=check_temp, args=(36.0, 0,))
-    temp_monitor_right = threading.Thread(target=check_temp, args=(36.0, 1,))
+    temp_monitor_left = threading.Thread(target=check_temp, args=(0,))
+    temp_monitor_right = threading.Thread(target=check_temp, args=(1,))
 
     temp_monitor_left.start()
     temp_monitor_right.start()
