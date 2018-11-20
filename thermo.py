@@ -110,7 +110,7 @@ def read_celsius(adc_channel=0):
     temp = 1/(a + t1 + t2) #calcualte temperature
 
     tempc = temp - 273.15 #K to C
-    
+
     return tempc
 
 def check_temp(max):
@@ -152,7 +152,7 @@ def main():
     port = 13000
     buffer_size = 1024
 
-    temp_monitor = threading.Thread(target=check_temp, args=(30.0,))
+    temp_monitor = threading.Thread(target=check_temp, args=(35.0,))
     temp_monitor.start()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
