@@ -172,9 +172,6 @@ def main():
             for motor in motors:
                 motor.run(Adafruit_MotorHAT.RELEASE)
             pass
-        if len(setting) > 0:
-            set_temp(setting[0], 0)
-            set_temp(setting[1], 1)
 
         except KeyboardInterrupt:
             for motor in motors:
@@ -183,5 +180,7 @@ def main():
             sock.close()
             print "Server going down"
             break
-
+        if len(setting) > 0:
+            set_temp(setting[0], 0)
+            set_temp(setting[1], 1)
 main()
