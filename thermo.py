@@ -89,7 +89,6 @@ def read_celsius(adc_channel=0):
         cmd = 0b01110000
     reply_bytes = spi.xfer2([cmd, 0])
     reply = ((reply_bytes[0] & 3) << 8) + reply_bytes[1]
-    print "Channel " + str(adc_channel) + ": " + str(reply_bytes) + " reply: " + str(reply)
 
     volts = (reply * 3.3) / 1024 #calculate the voltage
     ohms = ((1/volts)*3300)-1000 #calculate the ohms of the thermististor
@@ -109,6 +108,7 @@ def read_celsius(adc_channel=0):
     temp = 1/(a + t1 + t2) #calcualte temperature
 
     tempc = temp - 273.15 #K to C
+    print "Channel " + str(adc_channel) + ": " + str(reply_bytes) + " temp: " + str(tempc)
 
     return tempc
 
