@@ -7,13 +7,10 @@ spi.open(0, 0)
 spi.max_speed_hz = 500000
 
 def read_celsius(adc_channel=0):
-    cmd = 0b11 << 6                  
-    cmd |= (adc_channel & 0x07) << 3
-    reply_bytes = spi.xfer2([cmd, 0x0, 0x0])
-    # reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
-    reply = (reply_bytes[0] & 0x01) << 9
-    reply |= (reply_bytes[1] & 0xFF) << 1
-    reply |= (reply_bytes[2] & 0x80) >> 7
+    if adc_channel > 7 or adc_channel < 0:
+        return -1
+    reply_bytes = spi.xfer2([1, 8 + adc_channel << 4, 0])
+    reply = ((reply_bytes[1] & 3) << 8) + reply_bytes[2]
     print "Channel " + str(adc_channel) + ": " + str(reply_bytes) + " reply: " + str(reply)
 
     volts = (reply * 3.3) / 1024 #calculate the voltage
@@ -38,6 +35,6 @@ def read_celsius(adc_channel=0):
     return tempc
 
 while True:
-    print "ADC channel 0: " + str(read_celsius(1)) + " *C" + " channel 1: " + str(read_celsius(2)) + " *C"
+    print "ADC channel 0: " + str(read_celsius()) + " *C" + " channel 1: " + str(read_celsius(1)) + " *C"
     time.sleep(1)
 
