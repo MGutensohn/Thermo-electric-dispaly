@@ -148,10 +148,10 @@ def main():
         if read_celsius() > 38.0:
             motors[0].run(Adafruit_MotorHAT.RELEASE)
             print "killed lefty"
-            
+
         if read_celsius(1) > 38.0:
             motors[1].run(Adafruit_MotorHAT.RELEASE)
-	        print "killed righty."
+            print "killed righty."
         try:
             # Read the data sent by the Unity
             data, addr = sock.recvfrom(buffer_size)
