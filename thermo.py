@@ -120,11 +120,11 @@ def check_temp(max):
         temp_right = read_celsius(1)
         if temp_left >= max:
             motors[hand].run(Adafruit_MotorHAT.RELEASE)
-            print "Left hand exceeded " + max + " *C"
+            print "Left hand exceeded " + str(max) + " *C"
         if temp_right >= max:
             motors[hand].run(Adafruit_MotorHAT.RELEASE)
-            print "Right hand exceeded " + max + " *C"
-        print "Left temp: " + temp_left + "*C   Right temp: " + temp_right + "*C"
+            print "Right hand exceeded " + str(max) + " *C"
+        print "Left temp: " + str(temp_left) + "*C   Right temp: " + str(temp_right) + "*C"
         time.sleep(0.5)
 
 
