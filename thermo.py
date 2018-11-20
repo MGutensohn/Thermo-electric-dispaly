@@ -157,20 +157,20 @@ def main():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((host, port))
+    setting = []
     while True:
 
         print "listening to on %s port: %s" % (host, port)
         try:
             # Read the data sent by the Unity
-            setting = []
             data, addr = sock.recvfrom(buffer_size)
             if len(data) != 0:
                 print "Received [%s]" % data
 
                 setting = str(data).split(" ")
-
-            set_temp(setting[0], 0)
-            set_temp(setting[1], 1)
+            if len(setting) > 0:
+                set_temp(setting[0], 0)
+                set_temp(setting[1], 1)
         except IOError:
             for motor in motors:
                     motor.run(Adafruit_MotorHAT.RELEASE)
