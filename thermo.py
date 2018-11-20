@@ -155,7 +155,7 @@ def main():
     port = 13000
     buffer_size = 1024
 
-    temp_monitor = threading.Thread(target=check_temp, args(38.0))
+    temp_monitor = threading.Thread(target=check_temp, args=(38.0,))
     temp_monitor.start()
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
